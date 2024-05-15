@@ -47,5 +47,4 @@ npm start
 ## Notes
 - Ensure that both the frontend and backend servers are running simultaneously for the application to function correctly.
 - You can access the user list at the root URL (/), and user details can be accessed by clicking on a user in the list.
-- If you try to open http://localhost:3000/user-detail directly, it will redirect you to http://localhost:3000/. 
-Feel free to customize this readme.md file with additional information specific to your project. Good luck! 🚀
+- If you try to open http://localhost:3000/user-detail directly, it will redirect you to http://localhost:3000/.
