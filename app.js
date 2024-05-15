@@ -1,9 +1,11 @@
 const express = require('express');
+const cors = require('cors');
 const { User, Service, Address } = require('./models');
 
 const app = express();
-const port = 3000;
+const port = 5000;
 
+app.use(cors());
 app.use(express.json());
 
 app.get('/users', async (req, res) => {
@@ -12,10 +14,29 @@ app.get('/users', async (req, res) => {
 
     const offset = (page - 1) * limit;
 
-    const { count, rows } = await User.findAndCountAll({
+    const users = await User.findAll({
       attributes: ['id', 'name', 'profilePictureUrl'],
+      include: [
+        {
+          model: Service,
+          attributes: ['typeOfService'],
+        },
+      ],
       limit: parseInt(limit, 10),
       offset: parseInt(offset, 10),
+    });
+
+    const count = await User.count();
+
+    const formattedUsers = users.map(user => {
+      const services = user.Services.map(service => service.typeOfService);
+      return {
+        id: user.id,
+        name: user.name,
+        profilePictureUrl: user.profilePictureUrl,
+        services,
+        serviceCount: services.length,
+      };
     });
 
     const totalPages = Math.ceil(count / limit);
@@ -24,7 +45,7 @@ app.get('/users', async (req, res) => {
       totalUsers: count,
       totalPages,
       currentPage: parseInt(page, 10),
-      users: rows,
+      users: formattedUsers,
     });
   } catch (err) {
     res.status(500).json({ error: 'Something went wrong' });
